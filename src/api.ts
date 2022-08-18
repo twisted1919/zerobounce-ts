@@ -59,7 +59,7 @@ export class Api {
     throw new Error('Unable to decode the response from the server');
   }
 
-  public async validate(email: string, ipAddress?: string): Promise<ResponseType<ValidateResponseSuccess>> {
+  public async validate(email: string, ipAddress: string | null = null): Promise<ResponseType<ValidateResponseSuccess>> {
     let url = `${this.getApiURL()}/validate?api_key=${this.getApiKey()}&email=${email}`;
     if (ipAddress) {
       url = `${url}&ip_address=${ipAddress}`;

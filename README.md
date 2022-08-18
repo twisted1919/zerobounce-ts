@@ -33,7 +33,7 @@ const credits = async (api: Api) => {
 }
 
 // Example function to validate an email address
-const validate = async (api: Api, email: string, ipAddress?: string) => {
+const validate = async (api: Api, email: string, ipAddress: string | null = null) => {
   try {
     const response = await api.validate(email, ipAddress)
     if (response.isSuccess()) {
