@@ -1,12 +1,23 @@
 {
   "name": "zerobounce",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "ZeroBounce Email Verification Library",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/**/*"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/twisted1919/zerobounce-ts.git"
+  },
+  "homepage": "https://github.com/twisted1919/zerobounce-ts#readme",
+  "bugs": {
+    "url": "https://github.com/twisted1919/zerobounce-ts/issues"
+  },
+  "keywords": ["zerobounce", "email validation", "email bounce"],
+  "author": "twisted1919",
+  "license": "MIT",
   "scripts": {
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\"",
@@ -19,13 +30,6 @@
     "version" : "npm run format && git add -A src",
     "postversion" : "git push && git push --tags"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/twisted1919/zerobounce-ts.git"
-  },
-  "keywords": [],
-  "author": "twisted1919",
-  "license": "MIT",
   "devDependencies": {
     "@types/jest": "^28.1.7",
     "jest": "^28.1.3",
