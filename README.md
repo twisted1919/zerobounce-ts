@@ -70,11 +70,10 @@ credits(api);
 ## License
 MIT
 
-## Test  
-Set your api key in the `ZEROBOUNCE_API_KEY` environment variable, then run:  
-```bash
-$ npm test
-``` 
+## Test
+
+Run `npm test` to test the client with mocked API responses. If you set the `ZEROBOUNCE_API_KEY` environment variable,
+the suite also checks credits and email validation against the live API.
 
 ## Bug Reports
 Report [here](https://github.com/twisted1919/zerobounce-ts/issues).

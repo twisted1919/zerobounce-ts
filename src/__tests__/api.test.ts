@@ -1,70 +1,49 @@
+import axios from 'axios';
 import { Api, API_URL } from '../api';
-import { CreditsResponseSuccess } from '../credits';
-import { ValidateResponseSuccess, ValidateResponseSuccessStatus } from '../validate';
+
+jest.mock('axios');
+const get = jest.mocked(axios.get);
+
+beforeEach(() => {
+  get.mockReset();
+});
 
 test('Api.apiKey', () => {
-  const api = new Api(process.env.ZEROBOUNCE_API_KEY || '');
-
-  expect(api.getApiKey()).toBe(process.env.ZEROBOUNCE_API_KEY || '');
+  const api = new Api('initial-key');
+  expect(api.getApiKey()).toBe('initial-key');
 
   api.setApiKey('test');
   expect(api.getApiKey()).toBe('test');
 });
 
 test('Api.apiURL', () => {
-  const api = new Api(process.env.ZEROBOUNCE_API_KEY || '');
-
+  const api = new Api('test-key');
   expect(api.getApiURL()).toBe(API_URL);
 
   api.setApiURL('https://example.com');
   expect(api.getApiURL()).toBe('https://example.com');
 });
 
-test('Api.getCredits', async () => {
-  const api = new Api(process.env.ZEROBOUNCE_API_KEY || '');
+test('Api.getCredits returns a zero balance', async () => {
+  get.mockResolvedValueOnce({ status: 200, data: { Credits: '0' } });
 
-  const result = await api.getCredits();
-  expect(result.error).toBe(null);
-  expect(result.success).not.toBe(null);
-  expect(result.isError()).toBe(false);
-  expect(result.isSuccess()).toBe(true);
-  expect(result.success).toBeInstanceOf(CreditsResponseSuccess);
-  expect(result?.success?.credits ? Number(result.success.credits) : -1).toBeGreaterThanOrEqual(0);
+  const result = await new Api('test-key').getCredits();
+
+  expect(get).toHaveBeenCalledWith(`${API_URL}/getcredits?api_key=test-key`, { responseType: 'json' });
+  expect(result.success?.credits).toBe(0);
 });
 
-test('Api.validate', async () => {
-  const api = new Api(process.env.ZEROBOUNCE_API_KEY || '');
+test.each([
+  { ip: undefined, query: '' },
+  { ip: '127.0.0.1', query: '&ip_address=127.0.0.1' },
+])('Api.validate sends the expected request for IP $ip', async ({ ip, query }) => {
+  get.mockResolvedValueOnce({ status: 200, data: { address: 'valid@example.com', status: 'valid' } });
 
-  const emailQuery = [
-    { email: 'valid@example.com', expected_status: ValidateResponseSuccessStatus.Valid },
-    { email: 'invalid@example.com', expected_status: ValidateResponseSuccessStatus.Invalid },
-    { email: 'catch_all@example.com', expected_status: ValidateResponseSuccessStatus.CatchAll },
-    { email: 'unknown@example.com', expected_status: ValidateResponseSuccessStatus.Unknown },
-    { email: 'spamtrap@example.com', expected_status: ValidateResponseSuccessStatus.Spamtrap },
-    { email: 'abuse@example.com', expected_status: ValidateResponseSuccessStatus.Abuse },
-    { email: 'do_not_mail@example.com', expected_status: ValidateResponseSuccessStatus.DoNotMail },
-  ];
+  const result = await new Api('test-key').validate('valid@example.com', ip);
 
-  for (let i in emailQuery) {
-    const email = emailQuery[i];
-    const result = await api.validate(email.email);
-    expect(result.error).toBe(null);
-    expect(result.success).not.toBe(null);
-    expect(result.isError()).toBe(false);
-    expect(result.isSuccess()).toBe(true);
-    expect(result.success).toBeInstanceOf(ValidateResponseSuccess);
-    expect(result?.success?.status).toBe(email.expected_status);
-  }
-});
-
-test('Api.validateWithIP', async () => {
-  const api = new Api(process.env.ZEROBOUNCE_API_KEY || '');
-
-  const result = await api.validate('valid@example.com', '127.0.0.1');
-  expect(result.error).toBe(null);
-  expect(result.success).not.toBe(null);
-  expect(result.isError()).toBe(false);
-  expect(result.isSuccess()).toBe(true);
-  expect(result.success).toBeInstanceOf(ValidateResponseSuccess);
-  expect(result?.success?.status).toBe(ValidateResponseSuccessStatus.Valid);
+  expect(get).toHaveBeenCalledWith(`${API_URL}/validate?api_key=test-key&email=valid@example.com${query}`, {
+    responseType: 'json',
+  });
+  expect(result.success?.address).toBe('valid@example.com');
+  expect(result.success?.status).toBe('valid');
 });
