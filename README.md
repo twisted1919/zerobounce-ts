@@ -1,5 +1,9 @@
 # ZeroBounce Email Verification Library for TS
 
+## Disclaimer
+
+`zerobounce` is an unofficial TypeScript client for the ZeroBounce API. If you’re looking for ZeroBounce’s official JavaScript SDK for use with TypeScript, use [`@zerobounce/zero-bounce-sdk`](https://www.npmjs.com/package/@zerobounce/zero-bounce-sdk).
+
 ## Getting Started
 You will need a [zerobounce account](https://www.zerobounce.net) to get started.  
 Once you get an account, you will need to [get an api key](https://www.zerobounce.net/members/apikey/)
